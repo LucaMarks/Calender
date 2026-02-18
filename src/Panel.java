@@ -2,10 +2,8 @@
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.LayoutManager;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.util.ArrayList;
+import javax.swing.*;
 
 public class Panel {
     EventHandler eh;
@@ -13,11 +11,18 @@ public class Panel {
     JPanel mainPanel;
     JPanel bodyPanel;
     JPanel headerPanel;
+
+// page 1 components
+    JButton addClassButton;
+    JTextField addClassField;
+    JButton saveNewClassButton;
+
     int currPage = 0;
     int currMonth = 0;
     int width = 1200;
     int height = 750;
     public static final int regLineWidth = 2;
+
     Month[] months = new Month[12];
     Page calender = () -> this.drawCalenderPage();
     Page editClasses = () -> this.drawAddClassPage();
@@ -232,11 +237,85 @@ public class Panel {
     private void drawAddClassPage() {
         JPanel addClassPanel = new JPanel();
         addClassPanel.setLayout(null);
-        addClassPanel.setBackground(colourPallet[1]);
-        addClassPanel.setBounds((int)(width * (3.0/4)), headerMargin, 250, 250);
+        addClassPanel.setBackground(colourPallet[0]);
+        addClassPanel.setBounds((int)(width * (3.0/4)), headerMargin, 250, 125);
 
-        JButton addClassButton
+        ArrayList<JComponent> addClassComponents = new ArrayList<>();
 
+        int fieldX = 0;
+        int fieldY = 0;
+        int fieldYBuff = 0;
+        int fieldHeight = 35;
+        int[] widths = {100, 100};
+
+        addClassButton = new JButton("Add Class");
+        addClassButton.addActionListener(eh.addClassListener);
+        addClassComponents.add(addClassButton);
+
+        addClassField = new JTextField();
+        addClassField.setVisible(false);
+        addClassComponents.add(addClassField);
+
+
+        JPanel addClassPanel_ = Miscellaneous.populateVerticalForm(addClassPanel, fieldX, fieldY, fieldYBuff, fieldHeight, widths, (JComponent[])addClassComponents.toArray(new JComponent[0]));
+
+
+        saveNewClassButton = new JButton("Save");
+        saveNewClassButton.setVisible(false);
+        saveNewClassButton.setBackground(colourPallet[2]);
+        saveNewClassButton.setBounds(0, 55, 100, 35);
+        saveNewClassButton.addActionListener(eh.saveClassListener);
+        addClassPanel_.add(saveNewClassButton);
+
+        bodyPanel.add(addClassPanel_);
+
+
+        JPanel addAssignmentPanel = new JPanel();
+        addAssignmentPanel.setLayout(null);
+        addAssignmentPanel.setBackground(colourPallet[3]);
+        addAssignmentPanel.setBounds((int)(width * (1.0/2) - (sectionWidth / 2)), headerMargin, 250, 250);
+
+        ArrayList<JComponent> addAssignmentComponents = new ArrayList<>();
+
+        fieldX = 10;
+        fieldY = 10;
+        fieldYBuff = 10;
+        fieldHeight = 40;
+
+        JComboBox<String> classDropDown = new JComboBox<>();
+        classDropDown.setBackground(colourPallet[2]);
+        addAssignmentComponents.add(classDropDown);
+
+        JLabel assignmentNameLabel = new JLabel("Assignment Name");
+        assignmentNameLabel.setVisible(false);
+        addAssignmentComponents.add(assignmentNameLabel);
+
+        JTextField assignmentNameField = new JTextField();
+        assignmentNameField.setVisible(false);
+        addAssignmentComponents.add(assignmentNameField);
+
+        JLabel assignmentDueDateLabel = new JLabel("Due Date");
+        assignmentDueDateLabel.setVisible(false);
+        addAssignmentComponents.add(assignmentDueDateLabel);
+
+        JTextField assignmentDueDateField = new JTextField();
+        assignmentDueDateField.setVisible(false);
+        addAssignmentComponents.add(assignmentDueDateField);
+
+        JLabel asisgnmentStartLabel = new JLabel("Start Date");
+        asisgnmentStartLabel.setVisible(false);
+        addAssignmentComponents.add(asisgnmentStartLabel);
+
+        JTextField assignmentStartField = new JTextField();
+        assignmentStartField.setVisible(false);
+        addAssignmentComponents.add(assignmentStartField);
+
+        widths = new int[]{100, 75, 50, 75, 50, 75, 50};
+
+        JPanel addAssignmentPanel_ = Miscellaneous.populateVerticalForm(addAssignmentPanel, fieldX, fieldY, fieldYBuff, fieldHeight, widths, (JComponent[])addAssignmentComponents.toArray(new JComponent[0]));
+
+
+        bodyPanel.add(addAssignmentPanel_);
     }
 
 

@@ -39,6 +39,13 @@ public class EventHandler {
             else{panel.currMonth ++;}
             panel.updatePage();
         };
+
+        addClassListener = (ActionEvent _) -> {
+            panel.addClassButton.setVisible(false);
+            panel.addClassField.setVisible(true);
+            panel.saveNewClassButton.setVisible(true);
+        };
     }
+
 }
 

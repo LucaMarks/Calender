@@ -2,6 +2,15 @@ import javax.swing.*;
 
 public class Miscellaneous {
 
+    public static JComboBox<String> drawDropdown(int x, int y, int width, int height, String[] dropDownList){
+
+        JComboBox<String> dropDown = new JComboBox<>(dropDownList);
+        dropDown.setBackground(Panel.colourPallet[2]);
+        dropDown.setBounds(x, y, width, height);
+
+        return dropDown;
+    }
+
     public static JPanel populateVerticalForm(JPanel fieldPanel, int fieldX, int fieldY, int fieldBuffY, int fieldHeight, int[] widths, JComponent[] components){
         fieldPanel.setLayout(null);
 
