@@ -14,5 +14,10 @@ public class Month {
         this.days = days;
         this.startingDay = startingDay;
     }
+
+    @Override
+    public String toString(){
+        return month;
+    }
 }
 
