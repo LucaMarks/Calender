@@ -232,7 +232,10 @@ public class Panel {
     private void drawAddClassPage() {
         JPanel addClassPanel = new JPanel();
         addClassPanel.setLayout(null);
+        addClassPanel.setBackground(colourPallet[1]);
+        addClassPanel.setBounds((int)(width * (3.0/4)), headerMargin, 250, 250);
 
+        JButton addClassButton
 
     }
 
