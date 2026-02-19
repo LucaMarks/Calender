@@ -1,3 +1,6 @@
+import Dates.Date;
+import Dates.DateCode;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,7 +62,22 @@ public class EventHandler {
         };
 
         saveAssignmentListener = (ActionEvent _) -> {
-                        
+            try{int subjectIndex = Miscellaneous.getSubjectIndex(panel.currClassDropDown);
+
+                String[] dueDateString = panel.assignmentDueDateField.getText().split("/");
+                Date dueDate = new Date(new DateCode(dueDateString[0]), new DateCode(dueDateString[1]));
+                if(panel.assignmentStartField.getText() == null){
+                    panel.classList.get(subjectIndex).addAssessment(panel.assignmentNameField.getText(),dueDate);
+                }
+
+                else{
+                    String[] startDateString = panel.assignmentStartField.getText().split("/");
+                    Date startDate = new Date(new DateCode(startDateString[0]), new DateCode(startDateString[1]));
+                    panel.classList.get(subjectIndex).addAssessment(panel.assignmentNameField.getText(), startDate, dueDate);}
+            }
+            catch(Exception _){}
+            panel.addAssignmentComponentsVisibility = -1;
+            panel.updatePage();
         };
     }
 

@@ -31,4 +31,14 @@ public class Miscellaneous {
     public static void saveSubject(String name){
         Panel.classList.add(new Subject(name));
     }
+
+    public static int getSubjectIndex(String subjectName) throws Exception {
+        for(int i = 0; i < Panel.classList.size(); i++){
+            if(Panel.classList.get(i).equals(subjectName)){
+                //we have a match
+                return i;
+            }
+        }
+        throw new Exception("Name provided is not in Panel.classList");
+    }
 }

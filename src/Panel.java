@@ -2,8 +2,10 @@
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.LayoutManager;
+import java.text.ParseException;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 
 public class Panel {
     EventHandler eh;
@@ -13,6 +15,8 @@ public class Panel {
     JPanel headerPanel;
 
     public static ArrayList<Subject> classList = new ArrayList<>();
+    public  String currClassDropDown;
+
 
 // page 1 components
     public ArrayList<JComponent> addAssignmentComponents;
@@ -21,6 +25,10 @@ public class Panel {
     JButton addClassButton;
     public JTextField addClassField;
     JButton saveNewClassButton;
+
+    JTextField assignmentNameField;
+    JFormattedTextField assignmentDueDateField;
+    JFormattedTextField assignmentStartField;
 
     int currPage = 0;
     int currMonth = 0;
@@ -296,7 +304,7 @@ public class Panel {
         assignmentNameLabel.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentNameLabel);
 
-        JTextField assignmentNameField = new JTextField();
+        assignmentNameField = new JTextField();
         assignmentNameField.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentNameField);
 
@@ -304,21 +312,35 @@ public class Panel {
         assignmentDueDateLabel.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentDueDateLabel);
 
-        JTextField assignmentDueDateField = new JTextField();
+//        assignmentDueDateField = new JTextField();
+//        assignmentDueDateField.setVisible(fieldVisibility);
+
+        MaskFormatter dueDateMask;
+        try {dueDateMask = new MaskFormatter("##/##");} catch (ParseException ex) {throw new RuntimeException(ex);}
+        dueDateMask.setPlaceholder("_");
+        assignmentDueDateField = new JFormattedTextField(dueDateMask);
+        assignmentDueDateField.setColumns(10);
         assignmentDueDateField.setVisible(fieldVisibility);
+
         addAssignmentComponents.add(assignmentDueDateField);
 
-        JLabel asisgnmentStartLabel = new JLabel("Start Date");
-        asisgnmentStartLabel.setVisible(fieldVisibility);
-        addAssignmentComponents.add(asisgnmentStartLabel);
 
-        JTextField assignmentStartField = new JTextField();
+
+
+        JLabel assignmentStartDate = new JLabel("Start Date");
+        assignmentStartDate.setVisible(fieldVisibility);
+        addAssignmentComponents.add(assignmentStartDate);
+
+//        assignmentStartField = new JTextField();
+        MaskFormatter startDateMask;
+        try {startDateMask = new MaskFormatter("##/##");}catch(ParseException ex) {throw new RuntimeException(ex);}
+        assignmentStartField = new JFormattedTextField(startDateMask);
         assignmentStartField.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentStartField);
 
         JButton assignmentSaveButton = new JButton("Save");
         assignmentSaveButton.setVisible(fieldVisibility);
-
+        assignmentSaveButton.addActionListener(eh.saveAssignmentListener);
         addAssignmentComponents.add(assignmentSaveButton);
 
 
@@ -346,6 +368,10 @@ public class Panel {
 
         JComboBox<String> classDropDown = new JComboBox<>(classNames);
         classDropDown.setBackground(colourPallet[2]);
+
+        Object selected = classDropDown.getSelectedItem();
+        currClassDropDown = selected != null ? selected.toString():null;
+
         return classDropDown;
     }
 

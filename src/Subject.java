@@ -7,7 +7,7 @@ public class Subject {
     Panel panel;
 
     String name;
-    int currAssignmnetIndex;
+    Integer currAssignmentIndex;
 
     ArrayList<String> assessmentNames = new ArrayList<>();
 
@@ -25,11 +25,16 @@ public class Subject {
         assessmentNames.add(assessmentName);
         dueDates.add(dueDate);
         startDates.add(null);
+
+        if(currAssignmentIndex == null){currAssignmentIndex = 0;}
     }
+
 
     public void addAssessment(String assessmentName, Date dueDate, Date startDate){
         assessmentNames.add(assessmentName);
         dueDates.add(dueDate);
         startDates.add(startDate);
+
+        if(currAssignmentIndex == null){currAssignmentIndex = 0;}
     }
 }
