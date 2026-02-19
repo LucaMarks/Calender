@@ -27,4 +27,8 @@ public class Miscellaneous {
         }
         return fieldPanel;
     }
+
+    public static void saveSubject(String name){
+        Panel.classList.add(new Subject(name));
+    }
 }

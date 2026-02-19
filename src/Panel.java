@@ -12,9 +12,14 @@ public class Panel {
     JPanel bodyPanel;
     JPanel headerPanel;
 
+    public static ArrayList<Subject> classList = new ArrayList<>();
+
 // page 1 components
+    public ArrayList<JComponent> addAssignmentComponents;
+    public int addAssignmentComponentsVisibility = -1;
+
     JButton addClassButton;
-    JTextField addClassField;
+    public JTextField addClassField;
     JButton saveNewClassButton;
 
     int currPage = 0;
@@ -273,51 +278,76 @@ public class Panel {
         JPanel addAssignmentPanel = new JPanel();
         addAssignmentPanel.setLayout(null);
         addAssignmentPanel.setBackground(colourPallet[3]);
-        addAssignmentPanel.setBounds((int)(width * (1.0/2) - (sectionWidth / 2)), headerMargin, 250, 250);
+        addAssignmentPanel.setBounds((int)(width * (1.0/2) - (sectionWidth / 2)), headerMargin, 250, 400);
 
-        ArrayList<JComponent> addAssignmentComponents = new ArrayList<>();
+         addAssignmentComponents = new ArrayList<>();
 
         fieldX = 10;
         fieldY = 10;
-        fieldYBuff = 10;
+        fieldYBuff = 45;
         fieldHeight = 40;
 
-        JComboBox<String> classDropDown = new JComboBox<>();
-        classDropDown.setBackground(colourPallet[2]);
+        JComboBox<String> classDropDown = updateClassDropDown();
         addAssignmentComponents.add(classDropDown);
 
+        boolean fieldVisibility = addAssignmentComponentsVisibility != -1 ? convertVisibility(addAssignmentComponentsVisibility) : false;
+
         JLabel assignmentNameLabel = new JLabel("Assignment Name");
-        assignmentNameLabel.setVisible(false);
+        assignmentNameLabel.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentNameLabel);
 
         JTextField assignmentNameField = new JTextField();
-        assignmentNameField.setVisible(false);
+        assignmentNameField.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentNameField);
 
         JLabel assignmentDueDateLabel = new JLabel("Due Date");
-        assignmentDueDateLabel.setVisible(false);
+        assignmentDueDateLabel.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentDueDateLabel);
 
         JTextField assignmentDueDateField = new JTextField();
-        assignmentDueDateField.setVisible(false);
+        assignmentDueDateField.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentDueDateField);
 
         JLabel asisgnmentStartLabel = new JLabel("Start Date");
-        asisgnmentStartLabel.setVisible(false);
+        asisgnmentStartLabel.setVisible(fieldVisibility);
         addAssignmentComponents.add(asisgnmentStartLabel);
 
         JTextField assignmentStartField = new JTextField();
-        assignmentStartField.setVisible(false);
+        assignmentStartField.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentStartField);
 
-        widths = new int[]{100, 75, 50, 75, 50, 75, 50};
+        JButton assignmentSaveButton = new JButton("Save");
+        assignmentSaveButton.setVisible(fieldVisibility);
+
+        addAssignmentComponents.add(assignmentSaveButton);
+
+
+        widths = new int[]{100, 75, 50, 75, 50, 75, 50, 70};
 
         JPanel addAssignmentPanel_ = Miscellaneous.populateVerticalForm(addAssignmentPanel, fieldX, fieldY, fieldYBuff, fieldHeight, widths, (JComponent[])addAssignmentComponents.toArray(new JComponent[0]));
 
 
         bodyPanel.add(addAssignmentPanel_);
     }
+    private boolean convertVisibility(int input){
+        switch(input){
+//            case -1: return null;
+            case 0: return true;
+            case 1: return false;
+            default: return false;
+        }
+    }
+    private JComboBox<String> updateClassDropDown(){
 
+        String[] classNames = new String[classList.size()];
+        for(int i = 0; i < classList.size(); i++){
+            classNames[i] = classList.get(i).name;
+        }
+
+        JComboBox<String> classDropDown = new JComboBox<>(classNames);
+        classDropDown.setBackground(colourPallet[2]);
+        return classDropDown;
+    }
 
 
 }
