@@ -37,8 +37,10 @@ public class Panel {
     public static final int regLineWidth = 2;
 
     Month[] months = new Month[12];
-    Page calender = () -> this.drawCalenderPage();
-    Page editClasses = () -> this.drawAddClassPage();
+    Page calender = () -> drawCalenderPage();
+    Page editClasses = () -> {
+        try {drawAddClassPage();} catch (Exception e) {throw new RuntimeException(e);}
+    };
     Page[] pages;
 
     public static final int headerMargin = 42;
@@ -247,7 +249,7 @@ public class Panel {
         this.bodyPanel.repaint();
     }
 
-    private void drawAddClassPage() {
+    private void drawAddClassPage() throws Exception {
         JPanel addClassPanel = new JPanel();
         addClassPanel.setLayout(null);
         addClassPanel.setBackground(colourPallet[0]);
@@ -281,6 +283,7 @@ public class Panel {
         addClassPanel_.add(saveNewClassButton);
 
         bodyPanel.add(addClassPanel_);
+
 
 
         JPanel addAssignmentPanel = new JPanel();
@@ -326,7 +329,6 @@ public class Panel {
 
 
 
-
         JLabel assignmentStartDate = new JLabel("Start Date");
         assignmentStartDate.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentStartDate);
@@ -344,12 +346,23 @@ public class Panel {
         addAssignmentComponents.add(assignmentSaveButton);
 
 
-        widths = new int[]{100, 75, 50, 75, 50, 75, 50, 70};
+        widths = new int[]{200, 125, 100, 125, 100, 125, 100, 125};
 
         JPanel addAssignmentPanel_ = Miscellaneous.populateVerticalForm(addAssignmentPanel, fieldX, fieldY, fieldYBuff, fieldHeight, widths, (JComponent[])addAssignmentComponents.toArray(new JComponent[0]));
 
-
         bodyPanel.add(addAssignmentPanel_);
+
+        JPanel viewAssignmentsPanel = new JPanel();
+        viewAssignmentsPanel.setLayout(null);
+        viewAssignmentsPanel.setBackground(colourPallet[3]);
+        viewAssignmentsPanel.setBounds((int)(width * (1.0/8)), headerMargin, 250, 350);
+
+        int currClassIndex = Miscellaneous.getSubjectIndex(currClassDropDown);
+        if(currClassIndex != -1) {
+            JComboBox<String> viewAssignmentsComboBox = Miscellaneous.drawDropdown(5, 5, 100, 100, (classList.get(currClassIndex).assessmentNames.toArray(new String[0])));
+            viewAssignmentsPanel.add(viewAssignmentsComboBox);
+        }
+        bodyPanel.add(viewAssignmentsPanel);
     }
     private boolean convertVisibility(int input){
         switch(input){
