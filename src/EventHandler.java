@@ -21,6 +21,7 @@ public class EventHandler {
     ActionListener addClassListener;
     ActionListener saveClassListener;
     ActionListener saveAssignmentListener;
+    ActionListener classDropDownListener;
 
     public EventHandler(Panel panel) {
         this.panel = panel;
@@ -58,6 +59,11 @@ public class EventHandler {
             panel.addClassField.setVisible(false);
             panel.saveNewClassButton.setVisible(false);
             Miscellaneous.saveSubject(panel.addClassField.getText());
+            System.out.println("adding: " + panel.addClassField.getText() + " (eh 62)");
+//            panel.currClassDropDown = panel.addClassField.getText();
+//            System.out.println(panel.addClassField.getText());
+            panel.currClassDropDown = panel.addClassField.getText();//this might lead to issues where the selected class is not actually the one stored in memory
+            panel.updateClassDropDown();
             panel.updatePage();
         };
 
@@ -79,6 +85,16 @@ public class EventHandler {
             panel.addAssignmentComponentsVisibility = -1;
             panel.updatePage();
         };
+
+        classDropDownListener = (ActionEvent _) -> {
+            Object selected = panel.classDropDown.getSelectedItem();
+            panel.currClassDropDown = selected != null ? selected.toString():null;
+            System.out.println("Switching to " + panel.currClassDropDown + " (eh 89)");
+            //we want to update page since viewAssignmentsPanel (comboBox) would change
+            panel.addAssignmentComponentsVisibility = 0;
+            panel.updatePage();
+        };
+
     }
 
 }

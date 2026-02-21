@@ -15,7 +15,7 @@ public class Panel {
     JPanel headerPanel;
 
     public static ArrayList<Subject> classList = new ArrayList<>();
-    public  String currClassDropDown;
+    public String currClassDropDown;
 
 
 // page 1 components
@@ -26,6 +26,7 @@ public class Panel {
     public JTextField addClassField;
     JButton saveNewClassButton;
 
+    public JComboBox<String> classDropDown;
     JTextField assignmentNameField;
     JFormattedTextField assignmentDueDateField;
     JFormattedTextField assignmentStartField;
@@ -61,7 +62,7 @@ public class Panel {
 
     public void updatePage() {
         this.bodyPanel.removeAll();
-        this.pages[this.currPage].drawPage();
+        this.pages[currPage].drawPage();
         this.mainPanel.revalidate();
         this.mainPanel.repaint();
     }
@@ -291,14 +292,15 @@ public class Panel {
         addAssignmentPanel.setBackground(colourPallet[3]);
         addAssignmentPanel.setBounds((int)(width * (1.0/2) - (sectionWidth / 2)), headerMargin, 250, 400);
 
-         addAssignmentComponents = new ArrayList<>();
+        addAssignmentComponents = new ArrayList<>();
 
         fieldX = 10;
         fieldY = 10;
         fieldYBuff = 45;
         fieldHeight = 40;
 
-        JComboBox<String> classDropDown = updateClassDropDown();
+        if(classDropDown == null){updateClassDropDown();}
+//        JComboBox<String> classDropDown = updateClassDropDown();
         addAssignmentComponents.add(classDropDown);
 
         boolean fieldVisibility = addAssignmentComponentsVisibility != -1 ? convertVisibility(addAssignmentComponentsVisibility) : false;
@@ -357,9 +359,10 @@ public class Panel {
         viewAssignmentsPanel.setBackground(colourPallet[3]);
         viewAssignmentsPanel.setBounds((int)(width * (1.0/8)), headerMargin, 250, 350);
 
+        System.out.println("Checking for " + currClassDropDown);
         int currClassIndex = Miscellaneous.getSubjectIndex(currClassDropDown);
         if(currClassIndex != -1) {
-            JComboBox<String> viewAssignmentsComboBox = Miscellaneous.drawDropdown(5, 5, 100, 100, (classList.get(currClassIndex).assessmentNames.toArray(new String[0])));
+            JComboBox<String> viewAssignmentsComboBox = Miscellaneous.drawDropdown(5, 5, 200, 100, (classList.get(currClassIndex).assessmentNames.toArray(new String[0])));
             viewAssignmentsPanel.add(viewAssignmentsComboBox);
         }
         bodyPanel.add(viewAssignmentsPanel);
@@ -372,20 +375,28 @@ public class Panel {
             default: return false;
         }
     }
-    private JComboBox<String> updateClassDropDown(){
+    //this orriginally returned JComboBox<String>
+    public void updateClassDropDown(){
 
         String[] classNames = new String[classList.size()];
         for(int i = 0; i < classList.size(); i++){
             classNames[i] = classList.get(i).name;
         }
 
-        JComboBox<String> classDropDown = new JComboBox<>(classNames);
+//        if(classDropDown != null){
+//            System.out.println("this ran");
+//            Object selected = classDropDown.getSelectedItem();
+//            currClassDropDown = selected != null ? selected.toString():null;
+//        }
+
+
+        classDropDown = new JComboBox<>(classNames);
         classDropDown.setBackground(colourPallet[2]);
+        classDropDown.addActionListener(eh.classDropDownListener);
 
-        Object selected = classDropDown.getSelectedItem();
-        currClassDropDown = selected != null ? selected.toString():null;
+        //i think you would run into issues cuz this is only run once, and is not in a listener
 
-        return classDropDown;
+//        if(Panel.classList.size() == 1){System.out.println(curr)
     }
 
 

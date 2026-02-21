@@ -35,12 +35,12 @@ public class Miscellaneous {
     public static int getSubjectIndex(String subjectName) throws Exception {
         if(Panel.classList.size() > 0) {
             for (int i = 0; i < Panel.classList.size(); i++) {
-                if (Panel.classList.get(i).equals(subjectName)) {
+                if (Panel.classList.get(i).name.equals(subjectName)) {
                     //we have a match
                     return i;
                 }
             }
-            throw new Exception("Name provided is not in Panel.classList");
+            throw new Exception("Name provided: " + subjectName + " is not in Panel.classList");
         }
         return -1;
     }
