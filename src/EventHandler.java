@@ -24,6 +24,7 @@ public class EventHandler {
     ActionListener saveAssignmentListener;
     ActionListener classDropDownListener;
     ActionListener saveButtonListener;
+    ActionListener assignmentDropDownListener;
 
     public EventHandler(Panel panel) {
         this.panel = panel;
@@ -84,6 +85,11 @@ public class EventHandler {
                     Date startDate = new Date(new DateCode(startDateString[0]), new DateCode(startDateString[1]));
                     panel.classList.get(subjectIndex).addAssessment(panel.assignmentNameField.getText(), startDate, dueDate);
                 }
+
+                if(panel.classList.get(subjectIndex).currAssignmentIndex == null){
+                    //we can also change this to show the new assignment by writing = panel.classList.get(subjectIndex).assessmentNames.size() - 1 -> which would show the last item in the list which is the most recent one
+                    panel.classList.get(subjectIndex).currAssignmentIndex = 0;
+                }
             }
             catch(Exception _){}
 
@@ -93,7 +99,7 @@ public class EventHandler {
 
         classDropDownListener = (ActionEvent _) -> {
             Object selected = panel.classDropDown.getSelectedItem();
-            panel.currClassDropDown = selected != null ? selected.toString():null;
+            Panel.currClassDropDown = selected != null ? selected.toString():null;
             System.out.println("Switching to " + panel.currClassDropDown + " (eh 89)");
             //we want to update page since viewAssignmentsPanel (comboBox) would change
             panel.addAssignmentComponentsVisibility = 0;
@@ -102,6 +108,18 @@ public class EventHandler {
 
         saveButtonListener = (ActionEvent _) -> {
             Miscellaneous.save();
+        };
+
+        assignmentDropDownListener = (ActionEvent _) -> {
+            try {
+                Object selected = panel.viewAssignmentsComboBox.getSelectedItem();
+                String currAssignment = selected != null ? selected.toString() : null;
+                int subjectIndex = Miscellaneous.getSubjectIndex(Panel.currClassDropDown);
+                Panel.classList.get(subjectIndex).currAssignmentIndex = Miscellaneous.getAssignmentIndex(subjectIndex, currAssignment);
+                panel.updatePage();
+            }catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         };
     }
 

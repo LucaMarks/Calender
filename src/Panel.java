@@ -15,7 +15,7 @@ public class Panel {
     JPanel headerPanel;
 
     public static ArrayList<Subject> classList = new ArrayList<>();
-    public String currClassDropDown;
+    public static String currClassDropDown;
 
 
 // page 1 components
@@ -30,6 +30,8 @@ public class Panel {
     JTextField assignmentNameField;
     JFormattedTextField assignmentDueDateField;
     JFormattedTextField assignmentStartField;
+
+    public JComboBox<String> viewAssignmentsComboBox;
 
     int currPage = 0;
     int currMonth = 0;
@@ -371,13 +373,37 @@ public class Panel {
         viewAssignmentsPanel.setBackground(colourPallet[3]);
         viewAssignmentsPanel.setBounds((int)(width * (1.0/8)), headerMargin, 250, 350);
 
+
+
         System.out.println("Checking for " + currClassDropDown);
         int currClassIndex = Miscellaneous.getSubjectIndex(currClassDropDown);
+
         if(currClassIndex != -1) {
-            JComboBox<String> viewAssignmentsComboBox = Miscellaneous.drawDropdown(5, 5, 200, 100, (classList.get(currClassIndex).assessmentNames.toArray(new String[0])));
+            viewAssignmentsComboBox = Miscellaneous.drawDropdown(5, 5, 200, 100, (classList.get(currClassIndex).assessmentNames.toArray(new String[0])));
+            viewAssignmentsComboBox.addActionListener(eh.assignmentDropDownListener);
             viewAssignmentsPanel.add(viewAssignmentsComboBox);
-        }
-        bodyPanel.add(viewAssignmentsPanel);
+
+            if(classList.get(currClassIndex).assessmentNames.size() > 0) {
+                int assignmentIndex = classList.get(currClassIndex).currAssignmentIndex;
+
+
+                Subject currSubject = classList.get(currClassIndex);
+                ArrayList<JComponent> viewAssignmentComponents = new ArrayList<>();
+
+                JLabel showAssignmentName = new JLabel(currSubject.assessmentNames.get(assignmentIndex));
+                viewAssignmentComponents.add(showAssignmentName);
+
+                JLabel showAssignmentDueDate = new JLabel("Due Date: " + currSubject.dueDates.get(assignmentIndex).toString());
+                viewAssignmentComponents.add(showAssignmentDueDate);
+
+                JLabel showAssignmentStartDates = new JLabel("Due Date: " + currSubject.startDates.get(assignmentIndex).toString());
+                viewAssignmentComponents.add(showAssignmentStartDates);
+
+                widths = new int[]{100, 100, 100};
+                JPanel viewAssignmentsPanel_ = Miscellaneous.populateVerticalForm(viewAssignmentsPanel, 10, 110, 30, 25, widths, viewAssignmentComponents.toArray(new JComponent[0]));
+                bodyPanel.add(viewAssignmentsPanel_);
+            }
+        }else{bodyPanel.add(viewAssignmentsPanel);}
     }
     private boolean convertVisibility(int input){
         switch(input){

@@ -1,3 +1,6 @@
+import Dates.Date;
+import Dates.DateCode;
+
 import javax.swing.*;
 import java.io.*;
 import java.util.Scanner;
@@ -49,6 +52,14 @@ public class Miscellaneous {
         }
         return -1;
     }
+    public static int getAssignmentIndex(int classIndex, String assignmentName){
+        for(int i = 0; i < Panel.classList.get(classIndex).assessmentNames.size(); i++){
+            if(Panel.classList.get(classIndex).assessmentNames.get(i).equals(assignmentName)){
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public static void storeNewClass(String className) {
         try {
@@ -70,7 +81,7 @@ public class Miscellaneous {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("./Info.txt"));
             for (Subject subject : Panel.classList) {
-                writer.write(subject.name);
+                writer.write(subject.name + "," + subject.assessmentNames.size());
                 writer.newLine();
                 String[][] assessments = subject.getAssessments();
                 for (int i = 0; i < subject.assessmentNames.size(); i++) {
@@ -88,7 +99,34 @@ public class Miscellaneous {
         }
     }
     public static void loadData(){
-//        Scanner scanner = new Scanner()
+        System.out.println("Loading Data...");
+        try {
+            Scanner scanner = new Scanner(new File("./Info.txt"));
+            int classListIndex = 0;
+
+            //looping through one class at a time
+            while (scanner.hasNext()) {
+                String line1 = scanner.nextLine();
+                String[] nameNumber = line1.split(",");
+
+                System.out.println("adding -> " + nameNumber[0]);
+                Panel.classList.add(new Subject(nameNumber[0]));
+                if(classListIndex == 0){Panel.currClassDropDown = Panel.classList.get(0).name;}
+                for(int i = 0; i < Integer.parseInt(nameNumber[1]); i++){
+
+                    String assignmentName = scanner.next();
+                    String[] dueDateString = scanner.next().split("/");
+                    String[] startDateString = scanner.next().split("/");
+
+                    Panel.classList.get(classListIndex).addAssessment(assignmentName,
+                            new Date(new DateCode(dueDateString[0]), new DateCode(dueDateString[1])),
+                            new Date(new DateCode(startDateString[0]), new DateCode(startDateString[1])));
+                    Panel.classList.get(classListIndex).currAssignmentIndex = 0;
+                    System.out.println(Panel.classList.get(classListIndex).toString());
+                }
+                classListIndex++;
+            }
+        }catch(Exception e){e.printStackTrace();}
     }
 
 }

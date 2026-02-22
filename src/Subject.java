@@ -49,4 +49,13 @@ public class Subject implements Serializable {
         return assessments;
     }
 
+    @Override
+    public String toString(){
+        String builder = "";
+        for(int i = 0; i < assessmentNames.size(); i++){
+            builder += assessmentNames.get(i) + ", " + dueDates.toString() + "," + startDates.toString() + "\n";
+        }
+        return builder;
+    }
+
 }
