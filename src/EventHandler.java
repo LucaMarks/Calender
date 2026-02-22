@@ -4,6 +4,7 @@ import Dates.DateCode;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Scanner;
 
 public class EventHandler {
 
@@ -22,6 +23,7 @@ public class EventHandler {
     ActionListener saveClassListener;
     ActionListener saveAssignmentListener;
     ActionListener classDropDownListener;
+    ActionListener saveButtonListener;
 
     public EventHandler(Panel panel) {
         this.panel = panel;
@@ -60,6 +62,7 @@ public class EventHandler {
             panel.saveNewClassButton.setVisible(false);
             Miscellaneous.saveSubject(panel.addClassField.getText());
             System.out.println("adding: " + panel.addClassField.getText() + " (eh 62)");
+            Miscellaneous.storeNewClass(panel.addClassField.getText());
 //            panel.currClassDropDown = panel.addClassField.getText();
 //            System.out.println(panel.addClassField.getText());
             panel.currClassDropDown = panel.addClassField.getText();//this might lead to issues where the selected class is not actually the one stored in memory
@@ -79,9 +82,11 @@ public class EventHandler {
                 else{
                     String[] startDateString = panel.assignmentStartField.getText().split("/");
                     Date startDate = new Date(new DateCode(startDateString[0]), new DateCode(startDateString[1]));
-                    panel.classList.get(subjectIndex).addAssessment(panel.assignmentNameField.getText(), startDate, dueDate);}
+                    panel.classList.get(subjectIndex).addAssessment(panel.assignmentNameField.getText(), startDate, dueDate);
+                }
             }
             catch(Exception _){}
+
             panel.addAssignmentComponentsVisibility = -1;
             panel.updatePage();
         };
@@ -95,6 +100,9 @@ public class EventHandler {
             panel.updatePage();
         };
 
+        saveButtonListener = (ActionEvent _) -> {
+            Miscellaneous.save();
+        };
     }
 
 }

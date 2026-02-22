@@ -1,7 +1,9 @@
 package Dates;
 
 
-public class DateCode{
+import java.io.Serializable;
+
+public class DateCode {
 
     char[] character;
 
@@ -11,5 +13,10 @@ public class DateCode{
         } else {
             throw new CharException(code.length());
         }
+    }
+
+    @Override
+    public String toString(){
+        return  String.copyValueOf(character);
     }
 }

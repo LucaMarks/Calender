@@ -1,6 +1,8 @@
 package Dates;
 
-public class Date {
+import java.io.Serializable;
+
+public class Date implements Serializable {
 
     DateCode month;
     DateCode day;
@@ -12,5 +14,10 @@ public class Date {
 
     public Date(DateCode month, DateCode day, DateCode[] year){
         this.month = month; this.day = day; this.year = year;
+    }
+
+    @Override
+    public String toString(){
+        return month.toString() + "/" + day.toString();
     }
 }

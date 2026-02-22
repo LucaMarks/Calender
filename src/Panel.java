@@ -90,25 +90,29 @@ public class Panel {
     }
 
     public void setup() {
-        this.window = new JFrame();
-        this.mainPanel = new JPanel();
-        this.window.setDefaultCloseOperation(3);
-        this.window.setSize(this.width, this.height);
-        this.window.setLocationRelativeTo((Component)null);
-        this.window.setBackground(Color.GRAY);
-        this.window.setLayout((LayoutManager)null);
-        this.window.setResizable(false);
-        this.mainPanel = new JPanel();
-        this.mainPanel.setLayout((LayoutManager)null);
-        this.mainPanel.setBackground(colourPallet[0]);
-        this.mainPanel.setBounds(0, 0, this.width, this.height);
-        this.window.add(this.mainPanel);
-        this.window.setVisible(true);
-        this.bodyPanel = new JPanel();
-        this.bodyPanel.setLayout((LayoutManager)null);
-        this.bodyPanel.setBounds(0, 45, this.width, this.height - 42);
-        this.bodyPanel.setBackground(colourPallet[0]);
-        this.mainPanel.add(this.bodyPanel);
+        window = new JFrame();
+        mainPanel = new JPanel();
+        window.setDefaultCloseOperation(3);
+
+        window.setSize(this.width, this.height);
+        window.setLocationRelativeTo(null);
+        window.setBackground(Color.GRAY);
+        window.setLayout(null);
+        window.setResizable(false);
+
+        mainPanel = new JPanel();
+        mainPanel.setLayout(null);
+        mainPanel.setBackground(colourPallet[0]);
+        mainPanel.setBounds(0, 0, this.width, this.height);
+
+        window.add(this.mainPanel);
+        window.setVisible(true);
+
+        bodyPanel = new JPanel();
+        bodyPanel.setLayout(null);
+        bodyPanel.setBounds(0, 45, this.width, this.height - 42);
+        bodyPanel.setBackground(colourPallet[0]);
+        mainPanel.add(this.bodyPanel);
     }
 
     private void drawHeader() {
@@ -282,6 +286,14 @@ public class Panel {
         saveNewClassButton.setBounds(0, 55, 100, 35);
         saveNewClassButton.addActionListener(eh.saveClassListener);
         addClassPanel_.add(saveNewClassButton);
+
+
+
+        JButton saveButton = new JButton("Save*");
+        saveButton.setBackground(colourPallet[2]);
+        saveButton.setBounds((int)(width * (1.0/16)), headerMargin * 12, 100, 50);
+        saveButton.addActionListener(eh.saveButtonListener);
+        bodyPanel.add(saveButton);
 
         bodyPanel.add(addClassPanel_);
 
