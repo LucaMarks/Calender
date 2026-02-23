@@ -10,7 +10,10 @@ public class Miscellaneous {
     public static JComboBox<String> drawDropdown(int x, int y, int width, int height, String[] dropDownList) {
 
         JComboBox<String> dropDown = new JComboBox<>(dropDownList);
-        dropDown.setBackground(Panel.colourPallet[2]);
+        dropDown.setBackground(Theme.current.surface);
+        dropDown.setForeground(Theme.current.text);
+        dropDown.setFont(Panel.FONT_BODY);
+        dropDown.setBorder(Panel.INPUT_BORDER);
         dropDown.setBounds(x, y, width, height);
 
         return dropDown;
@@ -20,7 +23,14 @@ public class Miscellaneous {
         fieldPanel.setLayout(null);
 
         for (int i = 0; i < components.length; i++) {
-            components[i].setBackground(Panel.colourPallet[2]);
+            if (components[i] instanceof JLabel) {
+                components[i].setForeground(Theme.current.text);
+                components[i].setFont(Panel.FONT_BODY);
+            } else {
+                components[i].setBackground(Theme.current.surface);
+                components[i].setForeground(Theme.current.text);
+                components[i].setFont(Panel.FONT_BODY);
+            }
             try {
                 components[i].setBounds(fieldX, fieldY, widths[i], fieldHeight);
             } catch (Exception e) {
@@ -85,12 +95,11 @@ public class Miscellaneous {
                 writer.newLine();
                 String[][] assessments = subject.getAssessments();
                 for (int i = 0; i < subject.assessmentNames.size(); i++) {
-                    writer.write("  " + assessments[i][0]);
-                    writer.newLine();//name
-                    writer.write("      " + assessments[i][1].toString());
-                    writer.newLine();//due date
-                    writer.write("      " + assessments[i][2].toString());
-                    writer.newLine();//start date
+                    writer.write("  " + assessments[i][0]);writer.newLine();//name
+
+                    writer.write("      " + assessments[i][1].toString());writer.newLine();//due date
+
+                    writer.write("      " + assessments[i][2].toString());writer.newLine();//start date
                 }
             }
             writer.close();

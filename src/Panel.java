@@ -4,10 +4,16 @@ import Dates.DateCode;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.text.ParseException;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.text.MaskFormatter;
 
 public class Panel {
@@ -52,13 +58,25 @@ public class Panel {
     public static final int headerMargin = 42;
     public static final int sectionWidth = 130;
 
-    static Color[] dmList= new Color[]{Color.DARK_GRAY, Color.BLACK, Color.ORANGE, Color.getHSBColor(296.0F, 100.0F, 35.0F), Color.getHSBColor(242, 51, 91), Color.getHSBColor(351, 100, 89)};
-    static Color[] lmList= new Color[]{Color.WHITE, Color.GRAY, Color.GREEN, Color.getHSBColor(296.0F, 100.0F, 35.0F), Color.getHSBColor(242, 51, 91), Color.getHSBColor(351, 100, 89)};
-    public static Color[] colourPallet = dmList;
+    public static final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 16);
+    public static final Font FONT_BODY = new Font("Segoe UI", Font.PLAIN, 13);
+    public static final Font FONT_SMALL = new Font("Segoe UI", Font.PLAIN, 11);
+
+    static Color[] dmList= new Color[]{Theme.current.bg, Theme.current.border, Theme.current.accent, Theme.current.surface, Theme.current.start, Theme.current.due};
+    static Color[] lmList= new Color[]{Theme.current.bg, Theme.current.border, Theme.current.accent, Theme.current.surface, Theme.current.start, Theme.current.due};
+    public static Color[] colourPallet = lmList;
+
+    public static Border INPUT_BORDER = new CompoundBorder(
+            new LineBorder(Theme.current.border, 1, true),
+            new EmptyBorder(4, 8, 4, 8)
+    );
+
+    private boolean isDarkMode = false;
 
     public Panel() {
         this.pages = new Page[]{this.calender, this.editClasses};
         this.eh = new EventHandler(this);
+        this.applyTheme();
         this.setup();
         this.populateMonths();
         this.drawHeader();
@@ -101,13 +119,14 @@ public class Panel {
 
         window.setSize(this.width, this.height);
         window.setLocationRelativeTo(null);
-        window.setBackground(Color.GRAY);
+        window.setBackground(Theme.current.bg);
         window.setLayout(null);
         window.setResizable(false);
+        window.setTitle("Calender");
 
         mainPanel = new JPanel();
         mainPanel.setLayout(null);
-        mainPanel.setBackground(colourPallet[0]);
+        mainPanel.setBackground(Theme.current.bg);
         mainPanel.setBounds(0, 0, this.width, this.height);
 
         window.add(this.mainPanel);
@@ -116,29 +135,32 @@ public class Panel {
         bodyPanel = new JPanel();
         bodyPanel.setLayout(null);
         bodyPanel.setBounds(0, 45, this.width, this.height - 42);
-        bodyPanel.setBackground(colourPallet[0]);
+        bodyPanel.setBackground(Theme.current.bg);
         mainPanel.add(this.bodyPanel);
     }
 
     private void drawHeader() {
+        if (headerPanel != null) {
+            mainPanel.remove(headerPanel);
+        }
         headerPanel = new JPanel();
         headerPanel.setLayout((LayoutManager)null);
-        headerPanel.setBackground(colourPallet[0]);
+        headerPanel.setBackground(Theme.current.surface);
         headerPanel.setBounds(0, 0, this.width, headerMargin);
 
         JPanel headerLine = new JPanel();
-        headerLine.setBackground(colourPallet[1]);
+        headerLine.setBackground(Theme.current.accent);
         headerLine.setBounds(0, headerMargin - regLineWidth, width, regLineWidth);
         headerPanel.add(headerLine);
 
-        String[][] names = new String[][]{{"File", "2"}, {"Add/Edit", "1"}, {"View Calender", "0"}, {"", "4"}};
+        String[][] names = new String[][]{{"File", "2"}, {"Add/Edit", "1"}, {"View Calendar", "0"}, {"", "4"}};
         for(int i = 0; i < names.length; ++i) {
             JPanel line = new JPanel();
-            line.setBackground(colourPallet[1]);
+            line.setBackground(Theme.current.border);
             line.setBounds(130 * (i + 1), 0, 2, 42);
             this.headerPanel.add(line);
             JButton button = new JButton(names[i][0]);
-            button.setBackground(colourPallet[2]);
+            styleHeaderButton(button);
             button.setBounds(130 * i, 0, 130, 42);
             switch (Integer.parseInt(names[i][1])) {
                 case 0 -> button.addActionListener(this.eh.viewCalenderListener);
@@ -149,6 +171,17 @@ public class Panel {
             this.headerPanel.add(button);
         }
 
+        JButton themeButton = new JButton(isDarkMode ? "Light Mode" : "Dark Mode");
+        styleSecondaryButton(themeButton);
+        themeButton.setBounds(width - 140, 6, 120, 30);
+        themeButton.addActionListener(e -> {
+            isDarkMode = !isDarkMode;
+            applyTheme();
+            drawHeader();
+            updatePage();
+        });
+        headerPanel.add(themeButton);
+
         this.mainPanel.add(this.headerPanel);
         this.mainPanel.revalidate();
         this.mainPanel.repaint();
@@ -158,22 +191,31 @@ public class Panel {
 
         JPanel monthChangePanel = new JPanel();
         monthChangePanel.setLayout(null);
+        monthChangePanel.setBackground(Theme.current.bg);
 
-        int monthChangePanelWidth = 250;
-        monthChangePanel.setBounds((int)(width / 2), (regLineWidth * 2), monthChangePanelWidth, 30);
+        int monthChangePanelWidth = 320;
+        monthChangePanel.setBounds((width - monthChangePanelWidth) / 2, (regLineWidth * 2), monthChangePanelWidth, 30);
 
         JLabel month = new JLabel(months[currMonth].month);
-        month.setBackground(colourPallet[0]);
-        month.setBounds((monthChangePanelWidth / 2) - 15, 0, 50, 25);
+        month.setForeground(Theme.current.text);
+        month.setFont(FONT_TITLE);
+        month.setHorizontalAlignment(SwingConstants.CENTER);
+        int navButtonWidth = 34;
+        int navPadding = 6;
+        int labelX = navButtonWidth + navPadding;
+        int labelWidth = monthChangePanelWidth - (navButtonWidth + navPadding) * 2;
+        month.setBounds(labelX, 0, labelWidth, 25);
         monthChangePanel.add(month);
 
         JButton left = new JButton("<");
-        left.setBounds((int)(monthChangePanelWidth * (1.0/3)) - 25, 0, 50, 30);
+        left.setBounds(0, 0, navButtonWidth, 28);
+        styleSecondaryButton(left);
         left.addActionListener(eh.leftButtonListener);
         monthChangePanel.add(left);
 
         JButton right = new JButton(">");
-        right.setBounds((int)(monthChangePanelWidth * (2.0/3)), 0, 50, 30);
+        right.setBounds(monthChangePanelWidth - navButtonWidth, 0, navButtonWidth, 28);
+        styleSecondaryButton(right);
         right.addActionListener(eh.rightButtonListener);
         monthChangePanel.add(right);
 
@@ -181,7 +223,8 @@ public class Panel {
 
         JPanel calenderPanel = new JPanel();
         calenderPanel.setLayout(null);
-        calenderPanel.setBackground(colourPallet[3]);
+        calenderPanel.setBackground(Theme.current.surface);
+        calenderPanel.setBorder(new LineBorder(Theme.current.border, 1, true));
 
         int calX = (int)(width * (1.0/16));
         int calY = 42;
@@ -204,23 +247,32 @@ public class Panel {
             for(int j = 0; j < 7; j++){
                 JButton dayButton = new JButton();
                 dayButton.setLayout(null);
-                dayButton.setBackground(colourPallet[1]);
+                dayButton.setBackground(Theme.current.surface);
                 dayButton.setBounds(dayWidth * j, dayHeight * i, dayWidth, dayHeight);
+                dayButton.setBorder(new LineBorder(Theme.current.border, 1, true));
+                dayButton.setFocusPainted(false);
 
                 JLabel date = new JLabel();
                 date.setBounds(5, 5, 15, 15);
-                date.setForeground(colourPallet[3]);
+                date.setForeground(Theme.current.text);
+                date.setFont(FONT_SMALL);
 
                 int calenderPos =(j+1) + (i*7);
                 if(calenderPos < startingDay +1){
                     date.setText(String.valueOf(months[prevMonthIndex].days - ((startingDay +1) - calenderPos)));
-                    dayButton.setBackground(colourPallet[0]);
+                    dayButton.setBackground(Theme.current.surfaceAlt);
+                    date.setForeground(Theme.current.muted);
                 }
                 else if(calenderPos > months[currMonth].days + months[currMonth].startingDay){
                     date.setText(String.valueOf(nextMonthStartDays++));
-                    dayButton.setBackground(colourPallet[0]);
+                    dayButton.setBackground(Theme.current.surfaceAlt);
+                    date.setForeground(Theme.current.muted);
                 }else{
                     date.setText(String.valueOf(currMonthDays++));
+                    if (isDarkMode) {
+                        dayButton.setBackground(Theme.current.currentDayBg);
+                        dayButton.setBorder(new LineBorder(Theme.current.accent, 1, true));
+                    }
 
                     JLabel[] dates = showAssignments(new Date(new DateCode(String.valueOf(currMonth+1)), new DateCode(String.valueOf(currMonthDays-1))));
                     int x = 25;
@@ -260,12 +312,14 @@ public class Panel {
 //                System.out.println(classList.get(i).startDates.get(j).toString() + " = " + currDate.toString());
                 if(classList.get(i).startDates.get(j).toString().equals(currDate.toString())){
                     labels.add(new JLabel("Start: " + classList.get(i).name + " -> " + classList.get(i).assessmentNames.get(j)));
-                    labels.get(labels.size()-1).setForeground(colourPallet[4]);
+                    labels.get(labels.size()-1).setForeground(Theme.current.start);
+                    labels.get(labels.size()-1).setFont(FONT_SMALL);
                 }
 
                 if(classList.get(i).dueDates.get(j).toString().equals(currDate.toString())){
                     labels.add(new JLabel("Due: " + classList.get(i).name + " -> " + classList.get(i).assessmentNames.get(j)));
-                    labels.get(labels.size()-1).setForeground(colourPallet[5]);
+                    labels.get(labels.size()-1).setForeground(Theme.current.due);
+                    labels.get(labels.size()-1).setFont(FONT_SMALL);
                 }
             }
         }
@@ -276,7 +330,8 @@ public class Panel {
     private void drawAddClassPage() throws Exception {
         JPanel addClassPanel = new JPanel();
         addClassPanel.setLayout(null);
-        addClassPanel.setBackground(colourPallet[0]);
+        addClassPanel.setBackground(Theme.current.surface);
+        addClassPanel.setBorder(new LineBorder(Theme.current.border, 1, true));
         addClassPanel.setBounds((int)(width * (3.0/4)), headerMargin, 250, 125);
 
         ArrayList<JComponent> addClassComponents = new ArrayList<>();
@@ -288,10 +343,12 @@ public class Panel {
         int[] widths = {100, 100};
 
         addClassButton = new JButton("Add Class");
+        styleSecondaryButton(addClassButton);
         addClassButton.addActionListener(eh.addClassListener);
         addClassComponents.add(addClassButton);
 
         addClassField = new JTextField();
+        styleTextField(addClassField);
         addClassField.setVisible(false);
         addClassComponents.add(addClassField);
 
@@ -301,7 +358,7 @@ public class Panel {
 
         saveNewClassButton = new JButton("Save");
         saveNewClassButton.setVisible(false);
-        saveNewClassButton.setBackground(colourPallet[2]);
+        stylePrimaryButton(saveNewClassButton);
         saveNewClassButton.setBounds(0, 55, 100, 35);
         saveNewClassButton.addActionListener(eh.saveClassListener);
         addClassPanel_.add(saveNewClassButton);
@@ -309,7 +366,7 @@ public class Panel {
 
 
         JButton saveButton = new JButton("Save*");
-        saveButton.setBackground(colourPallet[2]);
+        stylePrimaryButton(saveButton);
         saveButton.setBounds((int)(width * (1.0/16)), headerMargin * 12, 100, 50);
         saveButton.addActionListener(eh.saveButtonListener);
         bodyPanel.add(saveButton);
@@ -320,7 +377,8 @@ public class Panel {
 
         JPanel addAssignmentPanel = new JPanel();
         addAssignmentPanel.setLayout(null);
-        addAssignmentPanel.setBackground(colourPallet[3]);
+        addAssignmentPanel.setBackground(Theme.current.surface);
+        addAssignmentPanel.setBorder(new LineBorder(Theme.current.border, 1, true));
         addAssignmentPanel.setBounds((int)(width * (1.0/2) - (sectionWidth / 2)), headerMargin, 250, 400);
 
         addAssignmentComponents = new ArrayList<>();
@@ -337,14 +395,17 @@ public class Panel {
         boolean fieldVisibility = addAssignmentComponentsVisibility != -1 ? convertVisibility(addAssignmentComponentsVisibility) : false;
 
         JLabel assignmentNameLabel = new JLabel("Assignment Name");
+        styleLabel(assignmentNameLabel);
         assignmentNameLabel.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentNameLabel);
 
         assignmentNameField = new JTextField();
+        styleTextField(assignmentNameField);
         assignmentNameField.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentNameField);
 
         JLabel assignmentDueDateLabel = new JLabel("Due Date");
+        styleLabel(assignmentDueDateLabel);
         assignmentDueDateLabel.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentDueDateLabel);
 
@@ -356,6 +417,7 @@ public class Panel {
         dueDateMask.setPlaceholder("_");
         assignmentDueDateField = new JFormattedTextField(dueDateMask);
         assignmentDueDateField.setColumns(10);
+        styleTextField(assignmentDueDateField);
         assignmentDueDateField.setVisible(fieldVisibility);
 
         addAssignmentComponents.add(assignmentDueDateField);
@@ -363,6 +425,7 @@ public class Panel {
 
 
         JLabel assignmentStartDate = new JLabel("Start Date");
+        styleLabel(assignmentStartDate);
         assignmentStartDate.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentStartDate);
 
@@ -370,11 +433,13 @@ public class Panel {
         MaskFormatter startDateMask;
         try {startDateMask = new MaskFormatter("##/##");}catch(ParseException ex) {throw new RuntimeException(ex);}
         assignmentStartField = new JFormattedTextField(startDateMask);
+        styleTextField(assignmentStartField);
         assignmentStartField.setVisible(fieldVisibility);
         addAssignmentComponents.add(assignmentStartField);
 
         JButton assignmentSaveButton = new JButton("Save");
         assignmentSaveButton.setVisible(fieldVisibility);
+        stylePrimaryButton(assignmentSaveButton);
         assignmentSaveButton.addActionListener(eh.saveAssignmentListener);
         addAssignmentComponents.add(assignmentSaveButton);
 
@@ -387,7 +452,8 @@ public class Panel {
 
         JPanel viewAssignmentsPanel = new JPanel();
         viewAssignmentsPanel.setLayout(null);
-        viewAssignmentsPanel.setBackground(colourPallet[3]);
+        viewAssignmentsPanel.setBackground(Theme.current.surface);
+        viewAssignmentsPanel.setBorder(new LineBorder(Theme.current.border, 1, true));
         viewAssignmentsPanel.setBounds((int)(width * (1.0/8)), headerMargin, 250, 350);
 
 
@@ -408,12 +474,15 @@ public class Panel {
                 ArrayList<JComponent> viewAssignmentComponents = new ArrayList<>();
 
                 JLabel showAssignmentName = new JLabel(currSubject.assessmentNames.get(assignmentIndex));
+                styleLabel(showAssignmentName);
                 viewAssignmentComponents.add(showAssignmentName);
 
                 JLabel showAssignmentDueDate = new JLabel("Due Date: " + currSubject.dueDates.get(assignmentIndex).toString());
+                styleLabel(showAssignmentDueDate);
                 viewAssignmentComponents.add(showAssignmentDueDate);
 
-                JLabel showAssignmentStartDates = new JLabel("Due Date: " + currSubject.startDates.get(assignmentIndex).toString());
+                JLabel showAssignmentStartDates = new JLabel("Start Date: " + currSubject.startDates.get(assignmentIndex).toString());
+                styleLabel(showAssignmentStartDates);
                 viewAssignmentComponents.add(showAssignmentStartDates);
 
                 widths = new int[]{100, 100, 100};
@@ -446,7 +515,7 @@ public class Panel {
 
 
         classDropDown = new JComboBox<>(classNames);
-        classDropDown.setBackground(colourPallet[2]);
+        styleComboBox(classDropDown);
         classDropDown.addActionListener(eh.classDropDownListener);
 
         //i think you would run into issues cuz this is only run once, and is not in a listener
@@ -454,6 +523,79 @@ public class Panel {
 //        if(Panel.classList.size() == 1){System.out.println(curr)
     }
 
+    private void styleLabel(JLabel label) {
+        label.setForeground(Theme.current.text);
+        label.setFont(FONT_BODY);
+    }
+
+    private void styleComboBox(JComboBox<String> comboBox) {
+        comboBox.setBackground(Theme.current.surface);
+        comboBox.setForeground(Theme.current.text);
+        comboBox.setFont(FONT_BODY);
+        comboBox.setBorder(INPUT_BORDER);
+    }
+
+    private void styleTextField(JTextField field) {
+        field.setBackground(Theme.current.surface);
+        field.setForeground(Theme.current.text);
+        field.setFont(FONT_BODY);
+        field.setBorder(INPUT_BORDER);
+        field.setMargin(new Insets(2, 6, 2, 6));
+    }
+
+    private void stylePrimaryButton(JButton button) {
+        button.setBackground(Theme.current.accent);
+        button.setForeground(Color.WHITE);
+        button.setFont(FONT_BODY);
+        button.setFocusPainted(false);
+        button.setBorder(new LineBorder(Theme.current.accentBorder, 1, true));
+        button.setOpaque(true);
+    }
+
+    private void styleSecondaryButton(JButton button) {
+        button.setBackground(Theme.current.surface);
+        button.setForeground(Theme.current.text);
+        button.setFont(FONT_BODY);
+        button.setFocusPainted(false);
+        button.setBorder(new LineBorder(Theme.current.border, 1, true));
+        button.setOpaque(true);
+    }
+
+    private void styleHeaderButton(JButton button) {
+        button.setBackground(Theme.current.surface);
+        button.setForeground(Theme.current.text);
+        button.setFont(FONT_BODY);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        button.setOpaque(true);
+    }
+
+    private void applyTheme() {
+        Theme.current = isDarkMode ? Theme.DARK : Theme.LIGHT;
+
+        colourPallet = new Color[]{
+                Theme.current.bg,
+                Theme.current.border,
+                Theme.current.accent,
+                Theme.current.surface,
+                Theme.current.start,
+                Theme.current.due
+        };
+        INPUT_BORDER = new CompoundBorder(
+                new LineBorder(Theme.current.border, 1, true),
+                new EmptyBorder(4, 8, 4, 8)
+        );
+
+        if (window != null) {
+            window.setBackground(Theme.current.bg);
+        }
+        if (mainPanel != null) {
+            mainPanel.setBackground(Theme.current.bg);
+        }
+        if (bodyPanel != null) {
+            bodyPanel.setBackground(Theme.current.bg);
+        }
+    }
+
 
 }
-
