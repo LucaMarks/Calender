@@ -151,17 +151,112 @@ public class Panel {
         this.mainPanel.repaint();
     }
 
-    private void drawCalenderPage() {
+//    private void drawCalenderPage() {
+//
+//        JPanel calenderPanel = new JPanel();
+//        calenderPanel.setLayout(null);
+//        calenderPanel.setBackground(colourPallet[3]);
+//
+//        int calX = (int)(width * (1.0/16));
+//        int calY = 42;
+//        int calWidth = (int)(width - width * (1.0/8));
+//        int calHeight = height - (headerMargin * 2) - regLineWidth;
+//        calenderPanel.setBounds(calX, calY, calWidth, calHeight);
+//
+//        JPanel monthChangePanel = new JPanel();
+//        monthChangePanel.setLayout(null);
+//
+//        int monthChangePanelWidth = 250;
+//        monthChangePanel.setBounds((int)(width / 2), (regLineWidth * 2), monthChangePanelWidth, 30);
+//
+//        JLabel month = new JLabel(months[currMonth].month);
+//        month.setBackground(colourPallet[0]);
+//        month.setBounds((monthChangePanelWidth / 2) - 15, 0, 50, 25);
+//        monthChangePanel.add(month);
+//
+//        JButton left = new JButton("<");
+//        left.setBounds((int)(monthChangePanelWidth * (1.0/3)) - 25, 0, 50, 30);
+//        left.addActionListener(eh.leftButtonListener);
+//        monthChangePanel.add(left);
+//
+//        JButton right = new JButton(">");
+//        right.setBounds((int)(monthChangePanelWidth * (2.0/3)), 0, 50, 30);
+//        right.addActionListener(eh.rightButtonListener);
+//        monthChangePanel.add(right);
+//
+//        bodyPanel.add(monthChangePanel);
+//        /*
+//            Get the total # of days we need to have based on the starting day
+//            calculate the overFlow -> how many days we need to add at the end to get a 5x7 grid
+//         */
+//        int neededDays = months[currMonth].startingDay + months[currMonth].days;
+//        int overFlow = 35 - neededDays;
+//        //we need overflow + neededDays to add up to 35
+//
+//        //update the starting day for the next month
+//        //remember overFlow is the days at the end that lead into the next month
+//        //overFlow is always going to be less then 7, will always be less than 5 since we are doing remainder 5
+//        System.out.println(months[currMonth].toString() + ", " + overFlow);
+//        if (currMonth + 1 < months.length - 1 && overFlow < 7 && overFlow > 0 && neededDays > 28) {
+//            months[currMonth + 1].startingDay = 7 - overFlow;
+//        }else if(currMonth + 1 > months.length){
+//                months[0].startingDay = 7 - overFlow;
+//        }else if(overFlow > 7){months[currMonth + 1].startingDay = 14 - overFlow;}
+//        else if(neededDays <= 28){months[currMonth + 1].startingDay = 0;}// if needed days <= 28 then the last week on a calender page is entirely for the next month, overflow is incorrectly calculated since it is divisor 5, but it this case only it would be divisor 4. There is very view cases where this happens
+//        else {
+//            months[currMonth + 1].startingDay = 0;
+//        }
+//
+//        int totalDays = neededDays + overFlow;
+//
+//        int currMonthCount = 1;
+//        int prevMonthOverFlow;
+//        if (this.currMonth - 1 > 0) {
+//            prevMonthOverFlow = this.months[this.currMonth - 1].days - this.months[this.currMonth].startingDay +1;
+//        } else {
+//            prevMonthOverFlow = this.months[this.months.length - 1].days - this.months[this.currMonth].startingDay +1;
+//        }
+//
+//        System.out.println(prevMonthOverFlow);
+//
+//        int dayWidth = calWidth / 7;
+//        int dayHeight = calHeight / 5;
+//
+//        int nextMonthStart = 1;
+//
+//        for(int i = 0; i < 5; ++i) {
+//            for(int j = 0; j < 7; ++j) {
+//                JButton day = new JButton();
+//                day.setLayout(null);
+//                day.setBackground(colourPallet[1]);
+//                day.setBounds(dayWidth * j, dayHeight * i, dayWidth, dayHeight);
+//
+//                int currCord = j + i * 7;
+//
+//                JLabel date = new JLabel();
+//                date.setBackground(colourPallet[0]);
+//                date.setForeground(colourPallet[3]);
+//                date.setBounds(5, 5, 15, 15);
+//
+//                if (currCord >= months[currMonth].startingDay && currCord <= months[currMonth].days + months[currMonth].startingDay -1) {//we need to do -1 because months[currMonth].days is not indexed from 0
+//                    date.setText(Integer.toString(currMonthCount++));
+//                } else if (currCord < this.months[this.currMonth].startingDay) {
+//                    date.setText(Integer.toString(prevMonthOverFlow++));
+//                } else {
+//                    date.setText(Integer.toString(nextMonthStart++));
+//                }
+//
+//                day.add(date);
+//                calenderPanel.add(day);
+//            }
+//        }
+//
+//        this.bodyPanel.add(calenderPanel);
+//        this.bodyPanel.revalidate();
+//        this.bodyPanel.repaint();
+//    }
 
-        JPanel calenderPanel = new JPanel();
-        calenderPanel.setLayout(null);
-        calenderPanel.setBackground(colourPallet[3]);
-
-        int calX = (int)(width * (1.0/16));
-        int calY = 42;
-        int calWidth = (int)(width - width * (1.0/8));
-        int calHeight = height - (headerMargin * 2) - regLineWidth;
-        calenderPanel.setBounds(calX, calY, calWidth, calHeight);
+    private void drawCalenderPage(){
 
         JPanel monthChangePanel = new JPanel();
         monthChangePanel.setLayout(null);
@@ -185,75 +280,66 @@ public class Panel {
         monthChangePanel.add(right);
 
         bodyPanel.add(monthChangePanel);
-        /*
-            Get the total # of days we need to have based on the starting day
-            calculate the overFlow -> how many days we need to add at the end to get a 5x7 grid
-         */
-        int neededDays = months[currMonth].startingDay + months[currMonth].days;
-        int overFlow = 35 - neededDays;
-        //we need overflow + neededDays to add up to 35
 
-        //update the starting day for the next month
-        //remember overFlow is the days at the end that lead into the next month
-        //overFlow is always going to be less then 7, will always be less than 5 since we are doing remainder 5
-        System.out.println(months[currMonth].toString() + ", " + overFlow);
-        if (currMonth + 1 < months.length - 1 && overFlow < 7 && overFlow > 0 && neededDays > 28) {
-            months[currMonth + 1].startingDay = 7 - overFlow;
-        }else if(currMonth + 1 > months.length){
-                months[0].startingDay = 7 - overFlow;
-        }else if(overFlow > 7){months[currMonth + 1].startingDay = 14 - overFlow;}
-        else if(neededDays <= 28){months[currMonth + 1].startingDay = 0;}// if needed days <= 28 then the last week on a calender page is entirely for the next month, overflow is incorrectly calculated since it is divisor 5, but it this case only it would be divisor 4. There is very view cases where this happens
-        else {
-            months[currMonth + 1].startingDay = 0;
-        }
+        JPanel calenderPanel = new JPanel();
+        calenderPanel.setLayout(null);
+        calenderPanel.setBackground(colourPallet[3]);
 
-        int totalDays = neededDays + overFlow;
-
-        int currMonthCount = 1;
-        int prevMonthOverFlow;
-        if (this.currMonth - 1 > 0) {
-            prevMonthOverFlow = this.months[this.currMonth - 1].days - this.months[this.currMonth].startingDay +1;
-        } else {
-            prevMonthOverFlow = this.months[this.months.length - 1].days - this.months[this.currMonth].startingDay +1;
-        }
-
-        System.out.println(prevMonthOverFlow);
+        int calX = (int)(width * (1.0/16));
+        int calY = 42;
+        int calWidth = (int)(width - width * (1.0/8));
+        int calHeight = height - (headerMargin * 3) - regLineWidth;
+        calenderPanel.setBounds(calX, calY, calWidth, calHeight);
 
         int dayWidth = calWidth / 7;
-        int dayHeight = calHeight / 5;
+        int dayHeight = calHeight / 6;
 
-        int nextMonthStart = 1;
+        //get starting day
+        int startingDay = months[currMonth].startingDay;
 
-        for(int i = 0; i < 5; ++i) {
-            for(int j = 0; j < 7; ++j) {
-                JButton day = new JButton();
-                day.setLayout(null);
-                day.setBackground(colourPallet[1]);
-                day.setBounds(dayWidth * j, dayHeight * i, dayWidth, dayHeight);
+        int prevMonthIndex = currMonth -1 > 0? currMonth-1:months.length -1;
+        int nextMonthIndex = currMonth +1 < 12 ?currMonth+1:0;
+        int currMonthDays = 1;
+        int nextMonthStartDays = 1;
 
-                int currCord = j + i * 7;
+        for(int i = 0; i < 6; i++){
+            for(int j = 0; j < 7; j++){
+                JButton dayButton = new JButton();
+                dayButton.setLayout(null);
+                dayButton.setBackground(colourPallet[1]);
+                dayButton.setBounds(dayWidth * j, dayHeight * i, dayWidth, dayHeight);
 
                 JLabel date = new JLabel();
-                date.setBackground(colourPallet[0]);
-                date.setForeground(colourPallet[3]);
                 date.setBounds(5, 5, 15, 15);
+                date.setForeground(colourPallet[3]);
 
-                if (currCord >= months[currMonth].startingDay && currCord <= months[currMonth].days + months[currMonth].startingDay -1) {//we need to do -1 because months[currMonth].days is not indexed from 0
-                    date.setText(Integer.toString(currMonthCount++));
-                } else if (currCord < this.months[this.currMonth].startingDay) {
-                    date.setText(Integer.toString(prevMonthOverFlow++));
-                } else {
-                    date.setText(Integer.toString(nextMonthStart++));
+                int calenderPos =(j+1) + (i*7);
+                if(calenderPos < startingDay +1){
+                    date.setText(String.valueOf(months[prevMonthIndex].days - ((startingDay +1) - calenderPos)));
+                    dayButton.setBackground(colourPallet[0]);
+                }
+                else if(calenderPos > months[currMonth].days + months[currMonth].startingDay){
+                    date.setText(String.valueOf(nextMonthStartDays++));
+                    dayButton.setBackground(colourPallet[0]);
+                }else{
+                    date.setText(String.valueOf(currMonthDays++));
                 }
 
-                day.add(date);
-                calenderPanel.add(day);
+                dayButton.add(date);
+                calenderPanel.add(dayButton);
             }
         }
 
-        this.bodyPanel.add(calenderPanel);
-        this.bodyPanel.revalidate();
-        this.bodyPanel.repaint();
+        int overFlow = 42 - (months[currMonth].startingDay + months[currMonth].days);
+//        System.out.println(overFlow);
+
+        months[nextMonthIndex].startingDay = overFlow > 7? 14-overFlow:7-overFlow;
+
+        overFlow = 42 - ((7 -startingDay) + months[prevMonthIndex].days);
+        months[prevMonthIndex].startingDay = overFlow > 7? overFlow -7: overFlow;
+
+        bodyPanel.add(calenderPanel);
+
     }
 
     private void drawAddClassPage() throws Exception {
