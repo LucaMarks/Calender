@@ -83,7 +83,7 @@ public class EventHandler {
                 else{
                     String[] startDateString = panel.assignmentStartField.getText().split("/");
                     Date startDate = new Date(new DateCode(startDateString[0]), new DateCode(startDateString[1]));
-                    panel.classList.get(subjectIndex).addAssessment(panel.assignmentNameField.getText(), startDate, dueDate);
+                    panel.classList.get(subjectIndex).addAssessment(panel.assignmentNameField.getText(), dueDate, startDate);
                 }
 
                 if(panel.classList.get(subjectIndex).currAssignmentIndex == null){
