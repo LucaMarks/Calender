@@ -21,6 +21,6 @@ public class Main {
     The view assignments drop down dosen't change because the page reloads every time the user selects a new drop down item
         -> We fixed this with the other drop down (see the listener for the other drop down)
         -> this issue happens bceause the user selects a page resets as a whole
-    -> adding a nother method to update the drop down menu would probably be useful
+    -> adding another method to update the drop down menu would probably be useful
         -> we only want to update the drop down menu when a new assignment is added, or the user changes the class from the 1st drop down
  */

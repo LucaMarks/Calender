@@ -10,6 +10,9 @@ public class DateCode {
     public DateCode(String code) {
         if (code.length() == 2) {
             this.character = code.toCharArray();
+        }else if(code.length() == 1){
+            String myCode = "0" + code;
+            character = myCode.toCharArray();
         } else {
             throw new CharException(code.length());
         }
